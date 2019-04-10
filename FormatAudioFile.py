@@ -18,6 +18,25 @@ appendix = [
   " (Extended Mix)"
 ]
 
+def reconstructDataOutOfFilename(fileString):
+
+  # replace all underscores
+  test = fileString.replace("_", " ")
+  # detect the file extension
+  fileExtension = test.split(".")[1]
+  # remove the file extension
+  test = test[:-(len(fileExtension)+1)] # +1 for the dot at the end
+  # remove all numbers
+  test = ''.join([i for i in test if not i.isdigit()])
+  # remove all hyphens
+  artistName, trackName = test.split(" - ")
+
+  # prepare the artistName
+  artistName = artistName.replace("-", "")
+  artistName = artistName.replace("and", "&")
+
+  return artistName.title(), trackName.title()
+
 def renameFile(artistName, trackName, fileString, newFileString):
 
   # only rename the file if the filenames are unidentical
@@ -32,18 +51,21 @@ def renameFile(artistName, trackName, fileString, newFileString):
     except OSError:
       print(f'Error: File in use [{fileString}]')
 
-def examineFileString(artistNameTag, trackNameTag, fileString):
+
+def examineFileString(artistNameTag, trackNameTag, fileString, audiofile):
 
   if (artistNameTag and trackNameTag):
     artistName = artistNameTag
     trackName = trackNameTag
-    newFileString = f"{artistNameTag} - {trackNameTag}.mp3"
   else:
-    #TODO: extraction of artistName and trackName from fileName
-    artistName = artistNameTag
-    trackName = trackNameTag
-    newFileString = fileString
-
+    artistName, trackName = reconstructDataOutOfFilename(fileString)
+    # this is even possible when the properties window is open and the file is in use, but the window needs a reload
+    # check later on if it's .mp3 before writing it in tags
+    audiofile.tag.artist = artistName
+    audiofile.tag.title = trackName
+    audiofile.tag.save()
+    
+  newFileString = f"{artistName} - {trackName}.mp3"
   return artistName, trackName, newFileString
 
 def getArtistNameAndTrackNameFromTag(audiofile):
@@ -69,7 +91,7 @@ def adjustFile(audiofile, fileString):
   # try to get data from tags
   artistNameTag, trackNameTag = getArtistNameAndTrackNameFromTag(audiofile)
 
-  artistName, trackName, newFileString = examineFileString(artistNameTag, trackNameTag, fileString)
+  artistName, trackName, newFileString = examineFileString(artistNameTag, trackNameTag, fileString, audiofile)
 
   renameFile(artistName, trackName, fileString, newFileString)
 
@@ -88,6 +110,7 @@ def main():
   musicFiles = findMusicFiles()
   for musicFileString in musicFiles:
     audiofile = eyed3.load(os.path.join(MUSIC_PATH, musicFileString))
+    # TODO: if musicFileString endswith .wav/.mp3/.flac
     adjustFile(audiofile, musicFileString)
   print('Done')
 
