@@ -34,6 +34,13 @@ def reconstructDataOutOfFilename(fileString):
   # prepare the artistName
   artistName = artistName.replace("-", "")
   artistName = artistName.replace("and", "&")
+  artistName = artistName.lstrip(' ')  # removes first white space
+
+  # prepare the trackName
+  for element in appendix:
+    if trackName.title().endswith(element):
+      trackName = trackName[:-(len(element))]
+      break
 
   return artistName.title(), trackName.title()
 
