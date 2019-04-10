@@ -1,6 +1,5 @@
 # Author: Alexander Senger
 # Version: 0.0.1
-# Description: A tool that formats music filenames which contains underscores "_"
 
 import eyed3
 import os
@@ -11,8 +10,9 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 
 # tracks folder
-MP3_PATH = os.path.join(os.getcwd(), "tracks")
+MUSIC_PATH = os.path.join(os.getcwd(), "tracks")
 
+# additional not needed string extensions in the file title
 appendix = [
   " (Original Mix)",
   " (Extended Mix)"
@@ -22,8 +22,8 @@ def renameFile(artistName, trackName, fileString, newFileString):
 
   # only rename the file if the filenames are unidentical
   if fileString != newFileString:
-    src = MP3_PATH + os.sep + fileString
-    dst = MP3_PATH + os.sep + newFileString
+    src = MUSIC_PATH + os.sep + fileString
+    dst = MUSIC_PATH + os.sep + newFileString
 
     print(f"[{fileString}] -> [{newFileString}]")
 
@@ -39,7 +39,7 @@ def examineFileString(artistNameTag, trackNameTag, fileString):
     trackName = trackNameTag
     newFileString = f"{artistNameTag} - {trackNameTag}.mp3"
   else:
-    #TODO: extraction of artistName and trackName of fileName
+    #TODO: extraction of artistName and trackName from fileName
     artistName = artistNameTag
     trackName = trackNameTag
     newFileString = fileString
@@ -75,7 +75,7 @@ def adjustFile(audiofile, fileString):
 
 def findMusicFiles():
   # scan files in the directory
-  fileNameList = [f for f in os.listdir(MP3_PATH) if os.path.isfile(os.path.join(MP3_PATH, f))]
+  fileNameList = [f for f in os.listdir(MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
   musicFiles = []
   for file in fileNameList:
     # endswith can be extended by e.g. (('.mp3', '.flac'))
@@ -87,12 +87,10 @@ def main():
   
   musicFiles = findMusicFiles()
   for musicFileString in musicFiles:
-    audiofile = eyed3.load(os.path.join(MP3_PATH, musicFileString))
+    audiofile = eyed3.load(os.path.join(MUSIC_PATH, musicFileString))
     adjustFile(audiofile, musicFileString)
-
   print('Done')
 
-# if it's our program
 if __name__ == '__main__':
   executionStartTime = time.time()
   main()
