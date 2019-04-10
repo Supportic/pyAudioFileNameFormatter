@@ -5,6 +5,7 @@ import eyed3
 import os
 import sys
 import time
+from string import digits
 
 import logging
 logging.basicConfig(level=logging.ERROR)
@@ -20,14 +21,12 @@ appendix = [
 
 def reconstructDataOutOfFilename(fileString):
 
-  # replace all underscores
-  test = fileString.replace("_", " ")
+  # remove first leading numbers and replace all underscores
+  test = fileString.lstrip(digits).replace("_", " ")
   # detect the file extension
   fileExtension = test.split(".")[1]
   # remove the file extension
   test = test[:-(len(fileExtension)+1)] # +1 for the dot at the end
-  # remove all numbers
-  test = ''.join([i for i in test if not i.isdigit()])
   # remove all hyphens
   artistName, trackName = test.split(" - ")
 
