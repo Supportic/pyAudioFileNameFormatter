@@ -6,8 +6,8 @@ This is a python script that formats music filenames which contain underscores `
 
 `Artist - Trackname`
 
-Currently only .mp3 files are supported but .wav, .flac are already considered as well.
-The **eyeD3** library <https://github.com/nicfit/eyeD3> is used to work with .mp3 tags. Thanks to him!
+Currently only .mp3 files are supported but .wav, .flac will be considered later as well.
+The **eyeD3** module <https://github.com/nicfit/eyeD3> is used to work with .mp3 tags. Thanks to him!
 
 ## Get it working
 
