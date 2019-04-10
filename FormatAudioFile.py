@@ -1,11 +1,11 @@
 # Author: Alexander Senger
-# Version: 0.0.1
+# Version: 0.0.2
 
 import eyed3
 import os
 import sys
 import time
-from string import digits
+import string
 
 import logging
 logging.basicConfig(level=logging.ERROR)
@@ -22,7 +22,7 @@ appendix = [
 def reconstructDataOutOfFilename(fileString):
 
   # remove first leading numbers and replace all underscores
-  test = fileString.lstrip(digits).replace("_", " ")
+  test = fileString.lstrip(string.digits).replace("_", " ")
   # detect the file extension
   fileExtension = test.split(".")[1]
   # remove the file extension
@@ -102,13 +102,13 @@ def adjustFile(audiofile, fileString):
   renameFile(artistName, trackName, fileString, newFileString)
 
 def findMusicFiles():
+
   # scan files in the directory
-  fileNameList = [f for f in os.listdir(MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
-  musicFiles = []
-  for file in fileNameList:
-    # endswith can be extended by e.g. (('.mp3', '.flac'))
-    if file.lower().endswith('.mp3'):
-      musicFiles.append(file)
+  fileNameList = [f for f in os.listdir(
+  MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
+  # endswith can be extended by e.g. (('.mp3', '.flac'))
+  musicFiles = [el for el in fileNameList if el.lower().endswith('.mp3')]
+
   return musicFiles
 
 def main():
