@@ -6,17 +6,18 @@ import os
 import sys
 import time
 import string
-
+import argparse
 import logging
 logging.basicConfig(level=logging.ERROR)
 
 # tracks folder
 MUSIC_PATH = os.path.join(os.getcwd(), "tracks")
 
-# additional not needed string extensions in the file title
+# additional not needed string extensions at the end of the file title
 appendix = [
   " (Original Mix)",
   " (Extended Mix)"
+  " (Extended)"
 ]
 
 def reconstructDataOutOfFilename(fileString):
@@ -101,11 +102,30 @@ def adjustFile(audiofile, fileString):
 
   renameFile(artistName, trackName, fileString, newFileString)
 
+def getDirectory():
+  parser = argparse.ArgumentParser()
+  parser.add_argument(
+      "-p","--path", help="Select the folder of the transforming tracks.", nargs=1, type=str)
+  args = parser.parse_args()
+  if args.path:
+    if os.path.isdir(args.path[0]):
+      print("path is valid")
+    else:
+      print("Error: Path is invalid. Make sure to make quotes around the path!")
+      exit()
+
 def findMusicFiles():
+  
+  getDirectory()
 
   # scan files in the directory
   fileNameList = [f for f in os.listdir(
   MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
+
+  if len(fileNameList) == 0: 
+    print("No files in folder. Program terminated.")
+    exit()
+
   # endswith can be extended by e.g. (('.mp3', '.flac'))
   musicFiles = [el for el in fileNameList if el.lower().endswith('.mp3')]
 
