@@ -16,7 +16,7 @@ MUSIC_PATH = os.path.join(os.getcwd(), "tracks")
 # additional not needed string extensions at the end of the file title
 appendix = [
   " (Original Mix)",
-  " (Extended Mix)"
+  " (Extended Mix)",
   " (Extended)"
 ]
 
@@ -112,7 +112,7 @@ def getDirectory():
       print("path is valid")
     else:
       print("Error: Path is invalid. Make sure to make quotes around the path!")
-      exit()
+      sys.exit()
 
 def findMusicFiles():
   
@@ -124,7 +124,7 @@ def findMusicFiles():
 
   if len(fileNameList) == 0: 
     print("No files in folder. Program terminated.")
-    exit()
+    sys.exit()
 
   # endswith can be extended by e.g. (('.mp3', '.flac'))
   musicFiles = [el for el in fileNameList if el.lower().endswith('.mp3')]
