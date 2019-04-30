@@ -17,7 +17,14 @@ MUSIC_PATH = os.path.join(os.getcwd(), "tracks")
 appendix = [
   " (Original Mix)",
   " (Extended Mix)",
-  " (Extended)"
+  " (Extended)",
+  " (DJ Mix)"
+]
+
+fileExtensions = [
+  "mp3",
+  "flac",
+  "wav"
 ]
 
 def reconstructDataOutOfFilename(fileString):
@@ -102,32 +109,40 @@ def adjustFile(audiofile, fileString):
 
   renameFile(artistName, trackName, fileString, newFileString)
 
-def getDirectory():
+def getCommandLineDirectory():
   parser = argparse.ArgumentParser()
   parser.add_argument(
-      "-p","--path", help="Select the folder of the transforming tracks.", nargs=1, type=str)
+    "-p","--path", help="Select the folder of the transforming tracks.", nargs=1, type=str)
   args = parser.parse_args()
   if args.path:
-    if os.path.isdir(args.path[0]):
-      print("path is valid")
-    else:
-      print("Error: Path is invalid. Make sure to make quotes around the path!")
+    if os.path.isdir(args.path[0]) == False:
+      print("Error: Path is invalid.")
       sys.exit()
+    else:
+      return args.path[0]
+  else:
+    return MUSIC_PATH
+    
 
 def findMusicFiles():
-  
-  getDirectory()
 
+  global MUSIC_PATH
+  MUSIC_PATH = getCommandLineDirectory()
+  
   # scan files in the directory
   fileNameList = [f for f in os.listdir(
   MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
 
   if len(fileNameList) == 0: 
-    print("No files in folder. Program terminated.")
+    print(f"No files in folder [{MUSIC_PATH}] found. Program terminated.")
     sys.exit()
 
   # endswith can be extended by e.g. (('.mp3', '.flac'))
   musicFiles = [el for el in fileNameList if el.lower().endswith('.mp3')]
+
+  if len(musicFiles) == 0:
+    print(f"No music files in folder [{MUSIC_PATH}] found. Program terminated.")
+    sys.exit()
 
   return musicFiles
 
