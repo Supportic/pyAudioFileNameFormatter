@@ -11,9 +11,23 @@ The **eyeD3** module <https://github.com/nicfit/eyeD3> is used to work with .mp3
 
 ## Get it working
 
-A `tracks` folder in the directory of the python program is needed, but can be changed in the `MUSIC_PATH` variable.
-Drop all music files in this folder and start the python program.
+A default `tracks` folder in the directory of the python program is needed, but will be created on the first execution if no other path is defined.
+Drop all music files in this folder (`./tracks`) and start the python program.
 
-```bash
+```console
 python FormatAudioFile.py
+```
+
+### PATH parameter
+
+You can specify another path in order to perform the track name transformation.
+
+```console
+python FormatAudioFile.py -p <PATH>
+```
+
+**or**
+
+```console
+python FormatAudioFile.py --path <PATH>
 ```
