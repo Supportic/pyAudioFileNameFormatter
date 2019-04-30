@@ -10,7 +10,7 @@ import argparse
 import logging
 logging.basicConfig(level=logging.ERROR)
 
-# tracks folder
+# relative path of the default tracks folder
 MUSIC_PATH = os.path.join(os.getcwd(), "tracks")
 
 # additional not needed string extensions at the end of the file title
@@ -109,6 +109,8 @@ def adjustFile(audiofile, fileString):
 
   renameFile(artistName, trackName, fileString, newFileString)
 
+# read the command line argument and check if it's a dir path
+# returns the newly selected path or the default path and creates the default folder if it's not existing
 def getCommandLineDirectory():
   parser = argparse.ArgumentParser()
   parser.add_argument(
@@ -121,14 +123,20 @@ def getCommandLineDirectory():
     else:
       return args.path[0]
   else:
+    if os.path.exists(MUSIC_PATH) == False:
+      try:
+        os.mkdir(MUSIC_PATH)
+      except OSError:
+        print(f"Creation of the directory [{MUSIC_PATH}] failed")
+      else:
+        print(f"Successfully created default track directory [{MUSIC_PATH}].")
     return MUSIC_PATH
     
-
 def findMusicFiles():
 
   global MUSIC_PATH
   MUSIC_PATH = getCommandLineDirectory()
-  
+
   # scan files in the directory
   fileNameList = [f for f in os.listdir(
   MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
