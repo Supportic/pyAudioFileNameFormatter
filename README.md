@@ -20,14 +20,14 @@ python FormatAudioFile.py
 
 ### PATH parameter
 
-You can specify another path in order to perform the track name transformation.
+You can specify another path in order to perform the trackname transformation.
 
-```console
+```bash
 python FormatAudioFile.py -p <PATH>
 ```
 
 **or**
 
-```console
+```bash
 python FormatAudioFile.py --path <PATH>
 ```

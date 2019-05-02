@@ -66,6 +66,7 @@ def renameFile(artistName, trackName, fileString, newFileString):
       print(f'Error: File in use [{fileString}]')
 
 
+# TODO: consider to check if one of the tags is valid and reconstruct the other part out of the filename
 def examineFileString(artistNameTag, trackNameTag, fileString, audiofile):
 
   if (artistNameTag and trackNameTag):
@@ -73,7 +74,6 @@ def examineFileString(artistNameTag, trackNameTag, fileString, audiofile):
     trackName = trackNameTag
   else:
     artistName, trackName = reconstructDataOutOfFilename(fileString)
-    # this is even possible when the properties window is open and the file is in use, but the window needs a reload
     # check later on if it's .mp3 before writing it in tags
     audiofile.tag.artist = artistName
     audiofile.tag.title = trackName
@@ -127,7 +127,7 @@ def getCommandLineDirectory():
       try:
         os.mkdir(MUSIC_PATH)
       except OSError:
-        print(f"Creation of the directory [{MUSIC_PATH}] failed")
+        print(f"Creation of the directory [{MUSIC_PATH}] failed.")
       else:
         print(f"Successfully created default track directory [{MUSIC_PATH}].")
     return MUSIC_PATH
