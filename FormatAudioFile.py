@@ -1,5 +1,5 @@
 # Author: Alexander Senger
-# Version: 0.0.2
+# Version: 0.0.3
 
 import eyed3
 import os
@@ -10,8 +10,8 @@ import argparse
 import logging
 logging.basicConfig(level=logging.ERROR)
 
-# relative path of the default tracks folder
-MUSIC_PATH = os.path.join(os.getcwd(), "tracks")
+# relative path of the default tracks folder of the folder where the program is
+MUSIC_PATH = os.path.join(sys.path[0], "tracks")
 
 # additional not needed string extensions at the end of the file title
 appendix = [
@@ -30,13 +30,13 @@ fileExtensions = [
 def reconstructDataOutOfFilename(fileString):
 
   # remove first leading numbers and replace all underscores
-  test = fileString.lstrip(string.digits).replace("_", " ")
+  tempString = fileString.lstrip(string.digits).replace("_", " ")
   # detect the file extension
-  fileExtension = test.split(".")[1]
+  fileExtension = tempString.split(".")[1]
   # remove the file extension
-  test = test[:-(len(fileExtension)+1)] # +1 for the dot at the end
+  tempString = tempString[:-(len(fileExtension)+1)] # +1 for the dot at the end
   # remove all hyphens
-  artistName, trackName = test.split(" - ")
+  artistName, trackName = tempString.split(" - ")
 
   # prepare the artistName
   artistName = artistName.replace("-", "")
@@ -127,9 +127,11 @@ def getCommandLineDirectory():
       try:
         os.mkdir(MUSIC_PATH)
       except OSError:
-        print(f"Creation of the directory [{MUSIC_PATH}] failed.")
+        print(
+            f"Creation of the directory [{MUSIC_PATH}] failed. Program terminated.")
       else:
-        print(f"Successfully created default track directory [{MUSIC_PATH}].")
+        print(f"Successfully created default track directory [{MUSIC_PATH}].\nYou can put your music files now in there and execute again. Program terminated.")
+        sys.exit()
     return MUSIC_PATH
     
 def findMusicFiles():
