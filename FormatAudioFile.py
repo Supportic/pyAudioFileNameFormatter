@@ -32,15 +32,17 @@ def reconstructDataOutOfFilename(fileString):
   # remove first leading numbers and replace all underscores
   tempString = fileString.lstrip(string.digits).replace("_", " ")
   # detect the file extension
-  fileExtension = tempString.split(".")[1]
+  _, fileExtension = os.path.splitext(tempString)
   # remove the file extension
-  tempString = tempString[:-(len(fileExtension)+1)] # +1 for the dot at the end
+  tempString = tempString[:-len(fileExtension)]
   # remove all hyphens
   artistName, trackName = tempString.split(" - ")
 
   # prepare the artistName
   artistName = artistName.replace("-", "")
-  artistName = artistName.replace("and", "&")
+  artistName = artistName.replace(" and ", "&")
+  # artistName = artistName.replace(" Feat. ", " Ft. ")
+  # artistName = artistName.replace(" feat. ", " ft. ")
   artistName = artistName.lstrip(' ')  # removes first white space
 
   # prepare the trackName
