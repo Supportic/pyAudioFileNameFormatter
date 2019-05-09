@@ -41,8 +41,8 @@ def reconstructDataOutOfFilename(fileString):
   # prepare the artistName
   artistName = artistName.replace("-", "")
   artistName = artistName.replace(" and ", "&")
-  # artistName = artistName.replace(" Feat. ", " Ft. ")
-  # artistName = artistName.replace(" feat. ", " ft. ")
+  artistName = artistName.replace(" Feat. ", " Ft. ")
+  artistName = artistName.replace(" feat. ", " ft. ")
   artistName = artistName.lstrip(' ')  # removes first white space
 
   # prepare the trackName
