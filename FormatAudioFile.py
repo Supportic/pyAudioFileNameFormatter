@@ -1,5 +1,5 @@
 # Author: Alexander Senger
-# Version: 0.0.3
+# Version: 0.0.4
 
 import eyed3
 import os
@@ -7,6 +7,7 @@ import sys
 import time
 import string
 import argparse
+import re
 import logging
 logging.basicConfig(level=logging.ERROR)
 
@@ -21,11 +22,12 @@ appendix = [
   " (DJ Mix)"
 ]
 
-fileExtensions = [
+fileExtensionList = [
   "mp3",
   "flac",
   "wav"
 ]
+
 
 def reconstructDataOutOfFilename(fileString):
 
@@ -34,9 +36,11 @@ def reconstructDataOutOfFilename(fileString):
   # detect the file extension
   _, fileExtension = os.path.splitext(tempString)
   # remove the file extension
-  tempString = tempString[:-len(fileExtension)]
+  tempString = tempString[:-(len(fileExtension))]
   # remove all hyphens
-  artistName, trackName = tempString.split(" - ")
+  # tempString = re.sub(r'[0-9]\-[^0-9]', '[0-9] [^0-9]', tempString)
+  # print(tempString)
+  artistName, trackName = tempString.split("-")
 
   # prepare the artistName
   artistName = artistName.replace("-", "")
@@ -52,6 +56,7 @@ def reconstructDataOutOfFilename(fileString):
       break
 
   return artistName.title(), trackName.title()
+
 
 def renameFile(artistName, trackName, fileString, newFileString):
 
@@ -80,20 +85,22 @@ def examineFileString(artistNameTag, trackNameTag, fileString, audiofile):
     audiofile.tag.artist = artistName
     audiofile.tag.title = trackName
     audiofile.tag.save()
-    
+
   newFileString = f"{artistName} - {trackName}.mp3"
   return artistName, trackName, newFileString
+
 
 def getArtistNameAndTrackNameFromTag(audiofile):
   if audiofile.tag.artist is None:
     artistName = None
   else:
-    artistName = audiofile.tag.artist.lstrip(' ') #remove first white space
+    artistName = audiofile.tag.artist.lstrip(
+      ' ')  # remove first white space
 
   if audiofile.tag.title is None:
     trackName = None
   else:
-    trackName = audiofile.tag.title.lstrip(' ') #remove first white space
+    trackName = audiofile.tag.title.lstrip(' ')  # remove first white space
     for element in appendix:
       if trackName.endswith(element):
         trackName = trackName[:-(len(element))]
@@ -103,20 +110,24 @@ def getArtistNameAndTrackNameFromTag(audiofile):
 
   return artistName, trackName
 
+
 def adjustFile(audiofile, fileString):
   # try to get data from tags
   artistNameTag, trackNameTag = getArtistNameAndTrackNameFromTag(audiofile)
 
-  artistName, trackName, newFileString = examineFileString(artistNameTag, trackNameTag, fileString, audiofile)
+  artistName, trackName, newFileString = examineFileString(
+    artistNameTag, trackNameTag, fileString, audiofile)
 
   renameFile(artistName, trackName, fileString, newFileString)
 
 # read the command line argument and check if it's a dir path
 # returns the newly selected path or the default path and creates the default folder if it's not existing
+
+
 def getCommandLineDirectory():
   parser = argparse.ArgumentParser()
   parser.add_argument(
-    "-p","--path", help="Select the folder of the transforming tracks.", nargs=1, type=str)
+    "-p", "--path", help="Select the folder of the transforming tracks.", nargs=1, type=str)
   args = parser.parse_args()
   if args.path:
     if os.path.isdir(args.path[0]) == False:
@@ -130,12 +141,14 @@ def getCommandLineDirectory():
         os.mkdir(MUSIC_PATH)
       except OSError:
         print(
-            f"Creation of the directory [{MUSIC_PATH}] failed. Program terminated.")
+          f"Creation of the directory [{MUSIC_PATH}] failed. Program terminated.")
       else:
-        print(f"Successfully created default track directory [{MUSIC_PATH}].\nYou can put your music files now in there and execute again. Program terminated.")
+        print(
+          f"Successfully created default track directory [{MUSIC_PATH}].\nYou can put your music files now in there and execute again. Program terminated.")
         sys.exit()
     return MUSIC_PATH
-    
+
+
 def findMusicFiles():
 
   global MUSIC_PATH
@@ -143,9 +156,9 @@ def findMusicFiles():
 
   # scan files in the directory
   fileNameList = [f for f in os.listdir(
-  MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
+    MUSIC_PATH) if os.path.isfile(os.path.join(MUSIC_PATH, f))]
 
-  if len(fileNameList) == 0: 
+  if len(fileNameList) == 0:
     print(f"No files in folder [{MUSIC_PATH}] found. Program terminated.")
     sys.exit()
 
@@ -153,19 +166,22 @@ def findMusicFiles():
   musicFiles = [el for el in fileNameList if el.lower().endswith('.mp3')]
 
   if len(musicFiles) == 0:
-    print(f"No music files in folder [{MUSIC_PATH}] found. Program terminated.")
+    print(
+      f"No music files in folder [{MUSIC_PATH}] found. Program terminated.")
     sys.exit()
 
   return musicFiles
 
+
 def main():
-  
+
   musicFiles = findMusicFiles()
   for musicFileString in musicFiles:
     audiofile = eyed3.load(os.path.join(MUSIC_PATH, musicFileString))
     # TODO: if musicFileString endswith .wav/.mp3/.flac
     adjustFile(audiofile, musicFileString)
   print('Done')
+
 
 if __name__ == '__main__':
   executionStartTime = time.time()
